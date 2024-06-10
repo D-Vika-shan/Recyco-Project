@@ -56,9 +56,9 @@ PORT=3000
 
 ### 4. Configure Azure Services
 
-Set up Azure Table Storage and obtain the account name and key.
-Set up an Azure Maps account and obtain the subscription key.
-Set up Azure Custom Vision and obtain the prediction endpoint and key.
+- Set up Azure Table Storage and obtain the account name and key.
+- Set up an Azure Maps account and obtain the subscription key.
+- Set up Azure Custom Vision and obtain the prediction endpoint and key.
 
 ### 5. Run the Application Locally
 
@@ -71,15 +71,19 @@ Visit `http://localhost:3000` in your browser to view the application.
 Ensure you have the necessary Azure resources set up and configure your GitHub repository secrets with the publish profile.
 
 ## Usage
+
 ### Logging In
 Enter your username, password, email, and location to log in.
 After logging in, you will be greeted with a welcome message.
+
 ### Logging Waste Details
 Select a waste category and enter a description.
 Submit the details to log the waste information.
+
 ### Image Classification
 Upload an image of the waste item.
 The application will classify the image using Azure Custom Vision and display the results.
+
 ### Viewing Recycling Centers
 Navigate to the "Centers" section to view nearby recycling centers on the map.
 
