@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         const description = document.getElementById('description').value;
         const category = document.getElementById('categoryTitle').innerText.split(' ')[2];
         const userId = userDetails.username;
-
+        const userEmail = userDetails.email; 
+    
         if (description) {
             try {
                 const response = await fetch('/storeOrderDetails', {
@@ -77,13 +78,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ userId, category, description }),
+                    body: JSON.stringify({ userId, category, description, userEmail }),
                 });
-
+    
                 if (!response.ok) {
                     throw new Error('Failed to store order details');
                 }
-
+    
                 wasteDetails.push({ category, description });
                 alert(`Description submitted: ${description}`);
                 document.getElementById('descriptionForm').style.display = 'none';
@@ -96,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('Please enter a description');
         }
     });
+    
 
     document.querySelectorAll('nav ul li a').forEach(link => {
         link.addEventListener('click', function(event) {

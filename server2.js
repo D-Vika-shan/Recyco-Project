@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { TableClient, AzureNamedKeyCredential } = require("@azure/data-tables");
+const { TableClient, AzureNamedKeyCredential } = require('@azure/data-tables');
+const { EmailClient } = require('@azure/communication-email');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,8 +15,11 @@ const customVisionEndpoint = process.env.AZURE_CUSTOM_VISION_ENDPOINT;
 const customVisionPredictionKey = process.env.AZURE_CUSTOM_VISION_API_KEY;
 
 const credential = new AzureNamedKeyCredential(accountName, accountKey);
-const loginTableName = "LoginDetails2";
-const orderTableName = "OrderDetails";
+const connectionString = process.env.ACS_CONNECTION_STRING;
+const emailClient = new EmailClient(connectionString);
+
+const loginTableName = 'LoginDetails2';
+const orderTableName = 'OrderDetails';
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -43,29 +47,29 @@ async function insertLoginDetails(username, password, email, location) {
 
         const entity = {
             partitionKey: username,
-            rowKey: "1",
+            rowKey: '1',
             password: password,
             email: email,
             location: location
         };
 
-        console.log("Entity to be inserted:", entity);
+        console.log('Entity to be inserted:', entity);
 
         await tableClient.createEntity(entity);
-        console.log("Login details inserted successfully.");
+        console.log('Login details inserted successfully.');
     } catch (error) {
-        console.error("Error inserting login details:", error);
+        console.error('Error inserting login details:', error);
     }
 }
 
 app.post('/submit-login', async (req, res) => {
     const { username, password, email, location } = req.body;
-    console.log("Form data received:", req.body);
+    console.log('Form data received:', req.body);
     await insertLoginDetails(username, password, email, location);
     res.send('Login details submitted successfully.');
 });
 
-async function insertOrderDetails(userId, category, description) {
+async function insertOrderDetails(userId, category, description, userEmail) {
     try {
         const tableClient = new TableClient(
             `https://${accountName}.table.core.windows.net`,
@@ -80,19 +84,36 @@ async function insertOrderDetails(userId, category, description) {
             description: description
         };
 
-        console.log("Entity to be inserted:", entity);
+        console.log('Entity to be inserted:', entity);
 
         await tableClient.createEntity(entity);
-        console.log("Order details inserted successfully.");
+        console.log('Order details inserted successfully.');
+
+        // Send email notification
+        const emailMessage = {
+            senderAddress: process.env.ACS_SENDER_ADDRESS,
+            content: {
+                subject: 'Order Details Submitted',
+                plainText: `Hello, ${userId}. Your order for ${category} has been successfully submitted with the following description: ${description}.`,
+            },
+            recipients: {
+                to: [{ address: userEmail }],
+            },
+        };
+
+        const poller = await emailClient.beginSend(emailMessage);
+        const result = await poller.pollUntilDone();
+        console.log('Email sent successfully:', result);
+
     } catch (error) {
-        console.error("Error inserting order details:", error);
+        console.error('Error inserting order details or sending email:', error);
     }
 }
 
 app.post('/storeOrderDetails', async (req, res) => {
-    const { userId, category, description } = req.body;
-    console.log("Order data received:", req.body);
-    await insertOrderDetails(userId, category, description);
+    const { userId, category, description, userEmail } = req.body;
+    console.log('Order data received:', req.body);
+    await insertOrderDetails(userId, category, description, userEmail);
     res.send('Order details submitted successfully.');
 });
 
