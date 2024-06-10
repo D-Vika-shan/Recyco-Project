@@ -53,4 +53,4 @@ jobs:
           app-name: 'Recycowebapp2'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4FB0794038DD48F1870AFF04EE62152F }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2C669F9A25C142A48C3384EDDE2B72E6 }}
