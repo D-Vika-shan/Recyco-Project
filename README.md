@@ -94,7 +94,7 @@ using VScode:
 ![VScode terminal Screenshot](https://github.com/D-Vika-shan/Recyco-Project/blob/master/assets/vscode%20terminal.png)
 
 Git hub:
-![git hub deployments Screenshot]((https://github.com/D-Vika-shan/Recyco-Project/blob/master/assets/git%20hub%20deployments.png))
+![git hub deployments Screenshot](https://github.com/D-Vika-shan/Recyco-Project/blob/master/assets/git%20hub%20deployments.png)
 
 ## Contributing
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
