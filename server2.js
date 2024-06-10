@@ -1,18 +1,17 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { TableClient, AzureNamedKeyCredential } = require("@azure/data-tables");
-require('dotenv').config();  // Load environment variables from .env file
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
 const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
-
-if (!accountName || !accountKey) {
-    throw new Error("Azure Storage account name and key must be provided as environment variables.");
-}
+const azureMapsSubscriptionKey = process.env.AZURE_MAPS_API_KEY;
+const customVisionEndpoint = process.env.AZURE_CUSTOM_VISION_ENDPOINT;
+const customVisionPredictionKey = process.env.AZURE_CUSTOM_VISION_API_KEY;
 
 const credential = new AzureNamedKeyCredential(accountName, accountKey);
 const loginTableName = "LoginDetails2";
@@ -20,15 +19,17 @@ const orderTableName = "OrderDetails";
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'), (err) => {
-        if (err) {
-            console.error('Error serving index.html:', err);
-            res.status(err.status || 500).send('Error loading the page.');
-        }
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+app.get('/config', (req, res) => {
+    res.json({
+        azureMapsSubscriptionKey: azureMapsSubscriptionKey,
+        customVisionEndpoint: customVisionEndpoint,
+        customVisionPredictionKey: customVisionPredictionKey
     });
 });
 
