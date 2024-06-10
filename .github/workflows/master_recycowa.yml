@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - RecycoWA
 
 on:
@@ -22,7 +25,7 @@ jobs:
         run: |
           npm install
           npm run build --if-present
-          npm test --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
         run: zip -r release.zip .
@@ -48,6 +51,11 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
+
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
