@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 
 app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, 'index.html');
+    const indexPath = path.join(__dirname, '/views/index.html');
     console.log(`Serving file from path: ${indexPath}`);
     res.sendFile(indexPath, (err) => {
         if (err) {

@@ -32,7 +32,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             document.getElementById('greetings').style.display = 'block';
             document.getElementById('welcomePage').style.display = 'block';
             document.getElementById('welcomeMessage').innerText = `Welcome, ${data.username}!`;
-            document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='icons/location.png' height=25 width=30></img> ${data.location}</span>`;
+            document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='/public/icons/location.png' height=25 width=30></img> ${data.location}</span>`;
         } else {
             console.error('Error submitting login details:', response.statusText);
         }
@@ -105,7 +105,7 @@ document.querySelectorAll('nav ul li a').forEach(link => {
         if (sectionId === 'profile') {
             document.getElementById('profile').innerHTML = `
                 <h3>Profile</h3>
-                <img src="icons/user.png" height=100 width=100 ></img>
+                <img src="/public/icons/user.png" height=100 width=100 ></img>
                 <p>Username: ${userDetails.username}</p>
                 <p>Email: ${userDetails.email}</p>
                 <p>Location: ${userDetails.location}</p>
@@ -120,7 +120,7 @@ document.querySelectorAll('nav ul li a').forEach(link => {
         } else if (sectionId === 'home') {
             document.getElementById('welcomePage').style.display = 'block';
             document.getElementById('welcomeMessage').innerText = `Hello, ${userDetails.username}!`;
-            document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='icons/location.png' height=25 width=30></img> ${userDetails.location}<span>`;
+            document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='/public/icons/location.png' height=25 width=30></img> ${userDetails.location}<span>`;
             document.getElementById('wasteCategories').style.display = 'block';
         } else if (sectionId === 'cam') {
             document.getElementById('camPage').style.display = 'block';
