@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #729c85;
+    text-align:center;
+}
+
+header,footer {
+    background-color: darkslategray;
+    padding: 10px;
+    color: whitesmoke;
+    height:max-content;
+}
+
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.branding {
+    display: flex;
+    align-items: center;
+}
+
+.branding img {
+    margin-right: 10px;
+}
+
+#loginPage,#orderDetails{
+    background-color: hwb(100 72% 9%);
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 300px;
+    height: 300px;
+    text-align: center;
+    margin: auto;
+}
+
+#greetings{
+    text-align:center;
+    font-size: 30px;
+}
+.loca{
+    display:inline-flexbox;
+    margin:0;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+#together {
+    display: inline-block;
+}
+
+button, #camPage input {
+    font-size:30px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: rgb(69, 106, 96);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+button:hover {
+    background-color: hsl(211, 100%, 70%);
+}
+
+#profile{
+    font-size:30px;
+}
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: whitesmoke;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+.contentSection {
+    padding: 2%;
+    display: none;
+    text-align:left;
+}
+
+#wasteCategories button {
+    display: block;
+    margin: 10px auto;
+    padding: 50px 20px;
+}
+
+#descriptionForm {
+    margin-top: 20px;
+}
+
+#welcomepage{
+    margin:0;
+    padding:2%;
+    font-size:30px;
+}

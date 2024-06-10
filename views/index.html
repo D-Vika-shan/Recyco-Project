@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://atlas.microsoft.com/sdk/js/atlas.min.js?api-version=2.0&subscription-key=1Dj4SDQvb4Zz66icjdcKKs1LaVVddBv2jbU2vVoSioA7X7cFUa5jJQQJ99AEACYeBjFGpqfEAAAgAZMPvuSb"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="branding">
+                <img src="icons/recyco.png" height="50" width="50" alt="Recyco Logo">
+                <span style="font-size: 70px;">RECYCO</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" data-section="home">Home</a></li>
+                    <li><a href="#" data-section="cam" id="camLink">Cam</a></li>
+                    <li><a href="#" data-section="about">About</a></li>
+                    <li><a href="#" data-section="contact">Contact</a></li>
+                    <li><a href="#" data-section="centers">Recycling centers</a></li>
+                    <li><a href="#" data-section="orderDetails">Order Details</a></li>
+                    <li><a href="#" data-section="profile">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div id="greetings" style="display: none;">
+            <span id="welcomeMessage"></span>
+            <span id="loc" class="loca" style="text-align:right"></span>
+        </div>
+    </header>
+    <main>
+        <br><br>
+        <div id="loginPage">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br><br>
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+                <br><br>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+                <br><br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div id="welcomePage" style="display: none;">
+            <div id="wasteCategories">
+                <div id="together">
+                    <button class="wasteButton" data-category="plastic">
+                        <img src="icons/news.png" height="50" width="50" alt="Plastic" /> Plastic
+                    </button>
+                    <button class="wasteButton" data-category="metal">
+                        <img src="icons/news.png" height="50" width="50" alt="Metal" /> Metal
+                    </button>
+                </div>
+                <div id="together">
+                    <button class="wasteButton" data-category="glass">
+                        <img src="icons/news.png" height="50" width="50" alt="Glass" /> Glass
+                    </button>
+                    <button class="wasteButton" data-category="newspaper">
+                        <img src="icons/news.png" height="50" width="50" alt="Newspaper" /> Newspaper
+                    </button>
+                </div>
+                <div id="together">
+                    <button class="wasteButton" data-category="batteries">
+                        <img src="icons/news.png" height="50" width="50" alt="Batteries" /> Batteries
+                    </button>
+                    <button class="wasteButton" data-category="tyres">
+                        <img src="icons/news.png" height="50" width="50" alt="Tyres" /> Tyres
+                    </button>
+                </div>
+                <div id="together">
+                    <button class="wasteButton" data-category="ewaste">
+                        <img src="icons/news.png" height="50" width="50" alt="E-Waste" /> E-Waste
+                    </button>
+                    <button class="wasteButton" data-category="cardboard">
+                        <img src="icons/news.png" height="50" width="50" alt="Cardboard" /> Other papers & cardboard
+                    </button>
+                </div>
+            </div>
+
+            <div id="camPage" style="display: none;">
+                <h2>Upload an Image</h2>
+                <input type="file" id="imageUpload" accept="image/*">
+                <button onclick="uploadAndClassifyImage()">Upload and Classify</button>
+                <div id="results"></div>
+            </div>
+
+            <div id="descriptionForm" style="display: none;">
+                <h3 id="categoryTitle"></h3>
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <br><br>
+                <button id="submitDescription">Submit</button>
+            </div>
+
+            <div id="about" class="contentSection" style="display: none;">
+                <h3>About Us</h3>
+                <p>This is the about section.</p>
+            </div>
+
+            <div id="contact" class="contentSection" style="display: none;">
+                <h3>Contact Us</h3>
+                <p>This is the contact section.</p>
+            </div>
+
+            <div id="profile" class="contentSection" style="display: none;">
+                <h3>Profile</h3>
+                <p>This is the profile section.</p>
+            </div>
+
+            <div id="orderDetails" class="contentSection" style="display: none;">
+                <h3>Order Details</h3>
+                <p>This is the order details section.</p>
+            </div>
+
+            <div id="centerPage" style="display:none;">
+                <h3>Nearest Recycling Centers</h3>
+                <div id="map" style="position: relative; width: 100%; height: 400px;"></div>
+                <br><br><br><br><br><br>
+            </div>
+
+            <button id="logoutButton" style="display: none;">Logout</button>
+        </div>
+    </main>
+    <script src="script.js"></script>
+    <br><br><br><br><br><br>
+    <footer>
+        <p>&copy; copyright Devika Prashant</p>
+        <br><br><br><br><br><br><br><br>
+    </footer>
+</body>
+</html>

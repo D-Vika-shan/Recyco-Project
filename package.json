@@ -1,0 +1,29 @@
+{
+  "name": "recyco",
+  "version": "1.0.0",
+  "description": "A recycling management system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"No tests specified\"",
+    "start": "node server.js",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "webapp",
+    "azure",
+    "sql",
+    "database",
+    "nodejs"
+  ],
+  "author": "Devika",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/data-tables": "^13.2.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mssql": "^10.0.2",
+    "path": "^0.12.7"
+  }
+}
