@@ -19,12 +19,10 @@ const orderTableName = "OrderDetails";
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    const indexPath = path.join(__dirname, '/views/index.html');
-    console.log(`Serving file from path: ${indexPath}`);
-    res.sendFile(indexPath, (err) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'), (err) => {
         if (err) {
             console.error('Error serving index.html:', err);
             res.status(err.status).end();
