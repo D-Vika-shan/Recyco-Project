@@ -89,8 +89,8 @@ Navigate to the "Centers" section to view nearby recycling centers on the map.
 
 ## Deployment Screenshots
 Here's a screenshot of the deployment process:
-- `![VScode terminal Screenshot](/assets/vscode terminal.png)`
-- `![git hub deployments Screenshot](/assets/git hub deployments.png)`
+- ![VScode terminal Screenshot](/assets/vscode terminal.png)
+- ![git hub deployments Screenshot](/assets/git hub deployments.png)
 
 ## Contributing
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
