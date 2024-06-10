@@ -2,15 +2,17 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { TableClient, AzureNamedKeyCredential } = require("@azure/data-tables");
+require('dotenv').config();  // Load environment variables from .env file
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-const connectionString = "DefaultEndpointsProtocol=https;AccountName=testingstoragerec;AccountKey=+hEIC5TQlxY0H+ICZ6Qlp836AI8pONmnqrGItFKj2rpNzFDrjhZ6qGGJaQfABM5cWvKXyuzSTLZf+AStU2MnNg==";
+const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+const accountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
 
-
-const accountName = "testingstoragerec";
-const accountKey = "+hEIC5TQlxY0H+ICZ6Qlp836AI8pONmnqrGItFKj2rpNzFDrjhZ6qGGJaQfABM5cWvKXyuzSTLZf+AStU2MnNg==";
+if (!accountName || !accountKey) {
+    throw new Error("Azure Storage account name and key must be provided as environment variables.");
+}
 
 const credential = new AzureNamedKeyCredential(accountName, accountKey);
 const loginTableName = "LoginDetails2";
@@ -25,7 +27,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'), (err) => {
         if (err) {
             console.error('Error serving index.html:', err);
-            res.status(err.status).end();
+            res.status(err.status || 500).send('Error loading the page.');
         }
     });
 });
@@ -55,7 +57,6 @@ async function insertLoginDetails(username, password, email, location) {
     }
 }
 
-
 app.post('/submit-login', async (req, res) => {
     const { username, password, email, location } = req.body;
     console.log("Form data received:", req.body);
@@ -72,8 +73,8 @@ async function insertOrderDetails(userId, category, description) {
         );
 
         const entity = {
-            partitionKey: userId.toString(), 
-            rowKey: new Date().toISOString(), 
+            partitionKey: userId.toString(),
+            rowKey: new Date().toISOString(),
             category: category,
             description: description
         };
