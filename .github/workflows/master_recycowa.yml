@@ -19,12 +19,14 @@ jobs:
           node-version: '20.x'
 
       - name: Install dependencies, build, and test
+      - name: Install dependencies, build, and test
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
       - name: Zip artifact for deployment
+        run: zip -r release.zip * .[^.]* -x "*.git*" "node_modules/*" ".github/*"
         run: zip -r release.zip * .[^.]* -x "*.git*" "node_modules/*" ".github/*"
 
       - name: Upload artifact for deployment job
@@ -40,11 +42,15 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: node-app
+
+      - name: List files for debugging
+        run: ls -R
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
