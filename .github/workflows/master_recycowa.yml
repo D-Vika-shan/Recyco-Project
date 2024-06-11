@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4  # Ensure you're using the correct version
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -25,7 +25,7 @@ jobs:
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip * .[^.]* -x "*.git*" "node_modules/*" ".github/*"  # Exclude unnecessary files and directories
+        run: zip -r release.zip * .[^.]* -x "*.git*" "node_modules/*" ".github/*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -39,16 +39,19 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: node-app
 
+      - name: List files for debugging
+        run: ls -R
+
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
