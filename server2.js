@@ -37,6 +37,8 @@ app.get('/config', (req, res) => {
     });
 });
 
+
+
 async function insertLoginDetails(username, password, email, location) {
     try {
         const tableClient = new TableClient(
@@ -116,6 +118,43 @@ app.post('/storeOrderDetails', async (req, res) => {
     await insertOrderDetails(userId, category, description, userEmail);
     res.send('Order details submitted successfully.');
 });
+
+app.get('/order-history', async (req, res) => {
+    const userId = req.query.userId; // Get the user ID from query parameter
+
+    if (!userId) {
+        return res.status(400).send('User ID is required.');
+    }
+
+    try {
+        const tableClient = new TableClient(
+            `https://${accountName}.table.core.windows.net`,
+            orderTableName,
+            credential
+        );
+
+        // Fetch entities filtered by userId (partitionKey)
+        const entities = tableClient.listEntities({
+            queryOptions: {
+                filter: `PartitionKey eq '${userId}'`
+            }
+        });
+
+        // Convert entities to an array and sort by timestamp in descending order
+        const orderHistory = [];
+        for await (const entity of entities) {
+            orderHistory.push(entity);
+        }
+
+        orderHistory.sort((a, b) => new Date(b.rowKey) - new Date(a.rowKey));
+        res.json(orderHistory);
+
+    } catch (error) {
+        console.error('Error fetching order history:', error);
+        res.status(500).send('Error fetching order history.');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);

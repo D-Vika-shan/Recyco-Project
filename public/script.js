@@ -97,6 +97,31 @@ document.addEventListener('DOMContentLoaded', async function() {
             alert('Please enter a description');
         }
     });
+
+    async function fetchOrderHistory() {
+        const userId = document.getElementById('username').value; // Assume there's an input field with the user's ID
+    
+        try {
+            const response = await fetch(`/order-history?userId=${userId}`);
+            const orderHistory = await response.json();
+    
+            const orderHistoryList = document.getElementById('orderDetails');
+            orderHistoryList.innerHTML = '';
+    
+            orderHistory.forEach(order => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Order ID: ${order.partitionKey}, Category: ${order.category}, Description: ${order.description}, Date: ${new Date(order.rowKey).toLocaleString()}`;
+                orderHistoryList.appendChild(listItem);
+            });
+        } catch (error) {
+            console.error('Error fetching order history:', error);
+        }
+    }
+    
+    
+    
+
+    //document.addEventListener('DOMContentLoaded', fetchOrderHistory);
     
 
     document.querySelectorAll('nav ul li a').forEach(link => {
@@ -124,10 +149,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 document.getElementById('logoutButton').style.display = 'block';
             } else if (sectionId === 'orderDetails') {
                 let detailsHtml = '<h3>Order Details</h3>';
-                wasteDetails.forEach(detail => {
-                    detailsHtml += `<p><b>Category:</b> ${detail.category}<br><b>Description:</b> ${detail.description}</p>`;
-                });
-                document.getElementById('orderDetails').innerHTML = detailsHtml;
+                
+                document.getElementById('orderDetails').innerHTML = fetchOrderHistory();
             } else if (sectionId === 'home') {
                 document.getElementById('welcomePage').style.display = 'block';
                 document.getElementById('welcomeMessage').innerText = `Hello, ${userDetails.username}!`;
