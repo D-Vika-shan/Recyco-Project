@@ -14,16 +14,16 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     document.getElementById('loginForm').addEventListener('submit', async function(event) {
         event.preventDefault(); 
-
+    
         const formData = new FormData(this);
-
+    
         const data = {
             username: formData.get('username'),
             password: formData.get('password'),
             email: formData.get('email'),
             location: formData.get('location')
         };
-
+    
         try {
             const response = await fetch('/submit-login', {
                 method: 'POST',
@@ -32,25 +32,78 @@ document.addEventListener('DOMContentLoaded', async function() {
                 },
                 body: JSON.stringify(data)
             });
-
+    
             if (response.ok) {
                 console.log('Login details submitted successfully.');
                 userDetails = data;
-
+    
+                // Clear the form after successful submission
+                this.reset();
+    
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('greetings').style.display = 'block';
                 document.getElementById('welcomePage').style.display = 'block';
+                document.getElementById('wasteCategories').style.display = 'block';
                 document.getElementById('welcomeMessage').innerText = `Welcome, ${data.username}!`;
                 document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='/icons/location.png' height=25 width=30></img> ${data.location}</span>`;
+            } else if (response.status === 400) {
+                const result = await response.json();
+                alert(result.message);
             } else {
                 console.error('Error submitting login details:', response.statusText);
             }
         } catch (error) {
             console.error('Error submitting login details:', error);
         }
+    });    
+
+    document.getElementById('signInForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        const data = {
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+
+        try {
+            const response = await fetch('/sign-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+
+            if (response.ok) {
+                const data = await response.json();
+                this.reset();
+
+                userDetails=data;
+                console.log('Signed in successfully:', userDetails);
+                document.getElementById('logoutButton').style.display = 'none';
+                document.getElementById('profile').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('greetings').style.display = 'block';
+                document.getElementById('welcomePage').style.display = 'block';
+                document.getElementById('wasteCategories').style.display = 'block';
+                document.getElementById('welcomeMessage').innerText = `Welcome, ${userDetails.username}!`;
+                document.getElementById('loc').innerHTML = `<span style="text-align:right"><img src='/icons/location.png' height=25 width=30></img> ${userDetails.location}</span>`;
+            } else {
+                const errorText = await response.text();
+                console.error('Error during sign-in:', errorText);
+                alert(`Sign-in failed: ${errorText}`);
+            }
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            alert('Internal server error. Please try again later.');
+        }
     });
 
     document.getElementById('logoutButton').addEventListener('click', function() {
+
         document.getElementById('loginPage').style.display = 'block';
         document.getElementById('welcomePage').style.display = 'none';
         document.getElementById('centerPage').style.display = 'none';
@@ -99,20 +152,41 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     async function fetchOrderHistory() {
-        const userId = document.getElementById('username').value; // Assume there's an input field with the user's ID
+        const email = userDetails.email; // Assume there's an input field with the user's ID
     
         try {
-            const response = await fetch(`/order-history?userId=${userId}`);
+            const response = await fetch(`/order-history?email=${email}`);
             const orderHistory = await response.json();
     
-            const orderHistoryList = document.getElementById('orderDetails');
-            orderHistoryList.innerHTML = '';
+            const orderHistoryTable = document.getElementById('orderDetails');
+            orderHistoryTable.innerHTML = '';
     
+            // Create table header
+            const header = document.createElement('thead');
+            header.innerHTML = `
+                <tr>
+                    <th>Order ID</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                </tr>
+            `;
+            orderHistoryTable.appendChild(header);
+
+            // Create table body
+            const body = document.createElement('tbody');
             orderHistory.forEach(order => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `Order ID: ${order.partitionKey}, Category: ${order.category}, Description: ${order.description}, Date: ${new Date(order.rowKey).toLocaleString()}`;
-                orderHistoryList.appendChild(listItem);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.partitionKey}</td>
+                    <td>${order.category}</td>
+                    <td>${order.description}</td>
+                    <td>${new Date(order.rowKey).toLocaleString()}</td>
+                `;
+                body.appendChild(row);
             });
+            orderHistoryTable.appendChild(body);
+
         } catch (error) {
             console.error('Error fetching order history:', error);
         }

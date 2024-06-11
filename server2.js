@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const { TableClient, AzureNamedKeyCredential } = require('@azure/data-tables');
 const { EmailClient } = require('@azure/communication-email');
@@ -38,37 +39,91 @@ app.get('/config', (req, res) => {
 });
 
 
+const tableClient = new TableClient(
+    `https://${accountName}.table.core.windows.net`,
+    loginTableName,
+    new AzureNamedKeyCredential(accountName, accountKey)
+);
 
-async function insertLoginDetails(username, password, email, location) {
+// Sign-up route
+app.post('/submit-login', async (req, res) => {
+    const { username, password, email, location } = req.body;
+
     try {
-        const tableClient = new TableClient(
-            `https://${accountName}.table.core.windows.net`,
-            loginTableName,
-            credential
-        );
+        // Check if email already exists
+        const existingUser = await tableClient.getEntity(email, email);
+        
+        if (existingUser) {
+            // Email already exists
+            return res.status(400).json({ message: 'Email already exists. Please sign in.' });
+        }
+    } catch (error) {
+        // If the error is because the email does not exist (404), then proceed with registration
+        if (error.statusCode !== 404) {
+            console.error('Error checking existing email:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    try {
+        // Hash the password before storing it
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const entity = {
-            partitionKey: username,
-            rowKey: '1',
-            password: password,
-            email: email,
+            partitionKey: email,
+            rowKey: username,
+            password: hashedPassword,
             location: location
         };
 
-        console.log('Entity to be inserted:', entity);
-
         await tableClient.createEntity(entity);
         console.log('Login details inserted successfully.');
+
+        res.status(201).json({ message: 'Login details submitted successfully.' });
     } catch (error) {
         console.error('Error inserting login details:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+});
 
-app.post('/submit-login', async (req, res) => {
-    const { username, password, email, location } = req.body;
-    console.log('Form data received:', req.body);
-    await insertLoginDetails(username, password, email, location);
-    res.send('Login details submitted successfully.');
+
+// Sign-in route
+app.post('/sign-in', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const entities = tableClient.listEntities({
+            queryOptions: { filter: `PartitionKey eq '${email}'` }
+        });
+
+        let userEntity = null;
+        for await (const entity of entities) {
+            userEntity = entity;
+            break;  // Assuming email is unique and there's only one entity
+        }
+        
+        // Extract user details from the retrieved entity
+        const data = {
+            username: userEntity.rowKey,
+            email: userEntity.partitionKey,
+            location: userEntity.location
+        };
+
+        if (!userEntity) {
+            return res.status(404).send('User not found');
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, userEntity.password);
+        if (!isPasswordValid) {
+            return res.status(401).send('Invalid credentials');
+        }
+
+        res.json(data);
+
+    } catch (error) {
+        console.error('Error signing in:', error);
+        res.status(500).send('Internal server error');
+    }
 });
 
 async function insertOrderDetails(userId, category, description, userEmail) {
@@ -80,7 +135,7 @@ async function insertOrderDetails(userId, category, description, userEmail) {
         );
 
         const entity = {
-            partitionKey: userId.toString(),
+            partitionKey: userEmail,
             rowKey: new Date().toISOString(),
             category: category,
             description: description
@@ -120,10 +175,10 @@ app.post('/storeOrderDetails', async (req, res) => {
 });
 
 app.get('/order-history', async (req, res) => {
-    const userId = req.query.userId; // Get the user ID from query parameter
+    const email = req.query.email; // Get the user ID from query parameter
 
-    if (!userId) {
-        return res.status(400).send('User ID is required.');
+    if (!email) {
+        return res.status(400).send('Email is required.');
     }
 
     try {
@@ -136,7 +191,7 @@ app.get('/order-history', async (req, res) => {
         // Fetch entities filtered by userId (partitionKey)
         const entities = tableClient.listEntities({
             queryOptions: {
-                filter: `PartitionKey eq '${userId}'`
+                filter: `PartitionKey eq '${email}'`
             }
         });
 

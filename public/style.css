@@ -28,18 +28,33 @@ header,footer {
     margin-right: 10px;
 }
 
-#loginPage,#orderDetails{
+#loginPage{
     background-color: hwb(100 72% 9%);
     padding: 2%;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     width: 300px;
-    height: 300px;
+    height: 500px;
     text-align: center;
     margin: auto;
 }
 
+#orderDetails{
+    background-color: hwb(100 72% 9%);
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 500px;
+    height: 500px;
+    text-align: center;
+    margin: auto;
+}
+
+table,th,td{
+    border: 1px dotted grey;
+}
 #greetings{
     text-align:center;
     font-size: 30px;
