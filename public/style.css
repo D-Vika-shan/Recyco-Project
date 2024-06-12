@@ -40,7 +40,7 @@ header,footer {
     margin: auto;
 }
 
-#orderDetails{
+#orderDetails,#profile{
     background-color: hwb(100 72% 9%);
     padding: 2%;
     border: 1px solid #ccc;
@@ -54,7 +54,11 @@ header,footer {
 
 table,th,td{
     border: 1px dotted grey;
+    margin: auto;
+    border-collapse: collapse;
 }
+
+
 #greetings{
     text-align:center;
     font-size: 30px;
@@ -90,7 +94,7 @@ button:hover {
 }
 
 #profile{
-    font-size:30px;
+    font-size:25px;
     text-align:center;
 }
 nav ul {

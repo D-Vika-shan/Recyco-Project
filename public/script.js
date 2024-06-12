@@ -216,9 +216,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 document.getElementById('profile').innerHTML = `
                     <h3>Profile</h3>
                     <img src="/icons/user.png" height=100 width=100 ></img>
-                    <p>Username: ${userDetails.username}</p>
-                    <p>Email: ${userDetails.email}</p>
-                    <p>Location: ${userDetails.location}</p>
+                    <table ><br><br>
+                    <tr><td><B>Username: </B></td><td>${userDetails.username}</td></tr>
+                    <tr><td><B>Email ID: </B></td><td>${userDetails.email}</td></tr>
+                    <tr><td><B>Location: </B></td><td>${userDetails.location}</td></tr>
+                    <table>
                 `;
                 document.getElementById('logoutButton').style.display = 'block';
             } else if (sectionId === 'orderDetails') {
