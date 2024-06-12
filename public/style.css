@@ -59,6 +59,7 @@ table,th,td{
 }
 
 
+
 #greetings{
     text-align:center;
     font-size: 30px;
@@ -77,7 +78,7 @@ h2 {
 }
 
 button, #camPage input {
-    font-size:30px;
+    font-size:20px;
     padding: 10px 20px;
     margin-top: 20px;
     background-color: rgb(69, 106, 96);
@@ -88,9 +89,8 @@ button, #camPage input {
 }
 
 
-
 button:hover {
-    background-color: hsl(211, 100%, 70%);
+    background-color: lightcoral;
 }
 
 #profile{

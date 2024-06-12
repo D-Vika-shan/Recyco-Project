@@ -36,8 +36,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (response.ok) {
                 console.log('Login details submitted successfully.');
                 userDetails = data;
-    
-                // Clear the form after successful submission
                 this.reset();
     
                 document.getElementById('loginPage').style.display = 'none';
@@ -152,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     async function fetchOrderHistory() {
-        const email = userDetails.email; // Assume there's an input field with the user's ID
+        const email = userDetails.email;
     
         try {
             const response = await fetch(`/order-history?email=${email}`);
@@ -161,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             const orderHistoryTable = document.getElementById('orderDetails');
             orderHistoryTable.innerHTML = '';
     
-            // Create table header
             const header = document.createElement('thead');
             header.innerHTML = `
                 <tr>
@@ -169,11 +166,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <th>Category</th>
                     <th>Description</th>
                     <th>Date</th>
+                    <th>Actions</th>
                 </tr>
             `;
             orderHistoryTable.appendChild(header);
 
-            // Create table body
             const body = document.createElement('tbody');
             orderHistory.forEach(order => {
                 const row = document.createElement('tr');
@@ -182,21 +179,44 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <td>${order.category}</td>
                     <td>${order.description}</td>
                     <td>${new Date(order.rowKey).toLocaleString()}</td>
+                    <td><button class="cancelOrderButton" data-order-id="${order.rowKey}">Cancel</button></td>
                 `;
                 body.appendChild(row);
             });
             orderHistoryTable.appendChild(body);
 
+            document.querySelectorAll('.cancelOrderButton').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const id = this.dataset.orderId;
+                    await cancelOrder(email, id);
+                    fetchOrderHistory(); 
+                });
+            });
+
         } catch (error) {
             console.error('Error fetching order history:', error);
         }
     }
-    
-    
-    
 
-    //document.addEventListener('DOMContentLoaded', fetchOrderHistory);
-    
+    async function cancelOrder(email, id) {
+        try {
+            const response = await fetch(`/cancel-order`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, id }),
+            });
+            if (response.ok) {
+                alert('Order cancelled successfully.');
+            } else {
+                alert('Failed to cancel order.');
+            }
+        } catch (error) {
+            console.error('Error cancelling order:', error);
+            alert('Failed to cancel order.');
+        }
+    }
 
     document.querySelectorAll('nav ul li a').forEach(link => {
         link.addEventListener('click', function(event) {

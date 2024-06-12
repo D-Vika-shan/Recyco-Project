@@ -45,20 +45,16 @@ const logintableClient = new TableClient(
     new AzureNamedKeyCredential(accountName, accountKey)
 );
 
-// Sign-up route
 app.post('/submit-login', async (req, res) => {
     const { username, password, email, location } = req.body;
 
     try {
-        // Check if email already exists
         const existingUser = await logintableClient.getEntity(email, email);
         
         if (existingUser) {
-            // Email already exists
             return res.status(400).json({ message: 'Email already exists. Please sign in.' });
         }
     } catch (error) {
-        // If the error is because the email does not exist (404), then proceed with registration
         if (error.statusCode !== 404) {
             console.error('Error checking existing email:', error);
             return res.status(500).json({ message: 'Internal server error' });
@@ -66,7 +62,6 @@ app.post('/submit-login', async (req, res) => {
     }
 
     try {
-        // Hash the password before storing it
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const entity = {
@@ -86,8 +81,6 @@ app.post('/submit-login', async (req, res) => {
     }
 });
 
-
-// Sign-in route
 app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
 
@@ -99,10 +92,9 @@ app.post('/sign-in', async (req, res) => {
         let userEntity = null;
         for await (const entity of entities) {
             userEntity = entity;
-            break;  // Assuming email is unique and there's only one entity
+            break;  
         }
         
-        // Extract user details from the retrieved entity
         const data = {
             username: userEntity.rowKey,
             email: userEntity.partitionKey,
@@ -170,17 +162,16 @@ async function insertOrderDetails(userId, category, description, userEmail) {
         await ordertableClient.createEntity(entity);
         console.log('Order details inserted successfully.');
 
-        // Send email notification
         const emailMessage = {
             senderAddress: process.env.ACS_SENDER_ADDRESS,
             content: {
                 subject: 'Order Details Submitted',
-                plainText: `Hello, ${userId}. Your order for ${category} has been successfully submitted with the following description: ${description}.`,
+                html: `Hello, ${userId}.<br> Order No.: ${entity.id}<br> Your order for ${category} has been successfully submitted with the following description: ${description}.`,
             },
             recipients: {
                 to: [{ address: userEmail }],
             },
-        };
+        };        
 
         const poller = await emailClient.beginSend(emailMessage);
         const result = await poller.pollUntilDone();
@@ -199,7 +190,7 @@ app.post('/storeOrderDetails', async (req, res) => {
 });
 
 app.get('/order-history', async (req, res) => {
-    const email = req.query.email; // Get the user ID from query parameter
+    const email = req.query.email;
 
     if (!email) {
         return res.status(400).send('Email is required.');
@@ -212,14 +203,12 @@ app.get('/order-history', async (req, res) => {
             credential
         );
 
-        // Fetch entities filtered by email (partitionKey)
         const entities = ordertableClient.listEntities({
             queryOptions: {
                 filter: `PartitionKey eq '${email}'`
             }
         });
 
-        // Convert entities to an array and sort by timestamp in descending order
         const orderHistory = [];
         for await (const entity of entities) {
             orderHistory.push(entity);
@@ -231,6 +220,42 @@ app.get('/order-history', async (req, res) => {
     } catch (error) {
         console.error('Error fetching order history:', error);
         res.status(500).send('Error fetching order history.');
+    }
+});
+
+
+app.delete('/cancel-order', async (req, res) => {
+    const { email, id } = req.body;
+
+    try {
+        const orderEntity = await ordertableClient.getEntity(email, id);
+        console.log(`Order no: ${orderEntity.id}`);
+        if (!orderEntity) {
+            return res.status(404).send('Order not found');
+        }
+
+        await ordertableClient.deleteEntity(email, id);
+        console.log('Order deleted successfully.');
+
+        const emailMessage = {
+            senderAddress: process.env.ACS_SENDER_ADDRESS,
+            content: {
+                subject: 'Order Cancelled',
+                plainText: `Hello, your order with ID ${orderEntity.id} has been successfully cancelled.`,
+            },
+            recipients: {
+                to: [{ address: email }],
+            },
+        };
+
+        const poller = await emailClient.beginSend(emailMessage);
+        const result = await poller.pollUntilDone();
+        console.log('Cancellation email sent successfully:', result);
+
+        res.status(200).send('Order cancelled successfully.');
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).send('Error cancelling order.');
     }
 });
 
