@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             orderHistory.forEach(order => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${order.partitionKey}</td>
+                    <td>${order.id}</td>
                     <td>${order.category}</td>
                     <td>${order.description}</td>
                     <td>${new Date(order.rowKey).toLocaleString()}</td>

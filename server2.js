@@ -39,7 +39,7 @@ app.get('/config', (req, res) => {
 });
 
 
-const tableClient = new TableClient(
+const logintableClient = new TableClient(
     `https://${accountName}.table.core.windows.net`,
     loginTableName,
     new AzureNamedKeyCredential(accountName, accountKey)
@@ -51,7 +51,7 @@ app.post('/submit-login', async (req, res) => {
 
     try {
         // Check if email already exists
-        const existingUser = await tableClient.getEntity(email, email);
+        const existingUser = await logintableClient.getEntity(email, email);
         
         if (existingUser) {
             // Email already exists
@@ -76,7 +76,7 @@ app.post('/submit-login', async (req, res) => {
             location: location
         };
 
-        await tableClient.createEntity(entity);
+        await logintableClient.createEntity(entity);
         console.log('Login details inserted successfully.');
 
         res.status(201).json({ message: 'Login details submitted successfully.' });
@@ -92,7 +92,7 @@ app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const entities = tableClient.listEntities({
+        const entities = logintableClient.listEntities({
             queryOptions: { filter: `PartitionKey eq '${email}'` }
         });
 
@@ -126,24 +126,48 @@ app.post('/sign-in', async (req, res) => {
     }
 });
 
+const ordertableClient = new TableClient(
+    `https://${accountName}.table.core.windows.net`,
+    orderTableName,
+    credential
+);
+
+const getNextOrderId = async () => {
+    let entities = [];
+    try {
+        for await (const entity of ordertableClient.listEntities()) {
+            entities.push(entity);
+        }
+        
+        if (entities.length === 0) {
+            return 1001;
+        } else {
+            entities.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+            const lastOrderId = parseInt(entities[0].id);
+            return lastOrderId + 1;
+        }
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw error;
+    }
+};
+
+
 async function insertOrderDetails(userId, category, description, userEmail) {
     try {
-        const tableClient = new TableClient(
-            `https://${accountName}.table.core.windows.net`,
-            orderTableName,
-            credential
-        );
-
+        
+        const newOrderId = await getNextOrderId();
         const entity = {
             partitionKey: userEmail,
             rowKey: new Date().toISOString(),
+            id: `${newOrderId}`,
             category: category,
             description: description
         };
 
         console.log('Entity to be inserted:', entity);
 
-        await tableClient.createEntity(entity);
+        await ordertableClient.createEntity(entity);
         console.log('Order details inserted successfully.');
 
         // Send email notification
@@ -182,14 +206,14 @@ app.get('/order-history', async (req, res) => {
     }
 
     try {
-        const tableClient = new TableClient(
+        const ordertableClient = new TableClient(
             `https://${accountName}.table.core.windows.net`,
             orderTableName,
             credential
         );
 
-        // Fetch entities filtered by userId (partitionKey)
-        const entities = tableClient.listEntities({
+        // Fetch entities filtered by email (partitionKey)
+        const entities = ordertableClient.listEntities({
             queryOptions: {
                 filter: `PartitionKey eq '${email}'`
             }
