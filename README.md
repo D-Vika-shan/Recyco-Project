@@ -88,7 +88,6 @@ The application will classify the image using Azure Custom Vision and display th
 Navigate to the "Centers" section to view nearby recycling centers on the map.
 
 ## Deployment Screenshots
-Here's a screenshot of the deployment process:
 Created resources in azure:
 ![Azure portal Screenshot](https://github.com/D-Vika-shan/Recyco-Project/blob/master/assets/azure%20portal.png)
 
