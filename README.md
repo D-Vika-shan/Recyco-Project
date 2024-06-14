@@ -102,14 +102,3 @@ Git hub deploying to azure web app:
 ![Git hub deployments Screenshot](https://github.com/D-Vika-shan/Recyco-Project/blob/master/assets/git%20hub%20deployments.png)
 
 
-
-## Contributing
-Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-
-
-
-
