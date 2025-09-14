@@ -127,6 +127,16 @@ nav ul li a:hover {
     display: block;
     margin: 10px auto;
     padding: 50px 20px;
+    background-color: #4CAF50; /* green */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#wasteCategories button:hover {
+    background-color: #388E3C; /* darker green on hover */
 }
 
 #descriptionForm {
