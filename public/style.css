@@ -28,17 +28,37 @@ header,footer {
     margin-right: 10px;
 }
 
-#loginPage{
-    background-color: hwb(100 72% 9%);
-    padding: 2%;
+#loginPage {
+    background-color: #ffffff;
+    padding: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 300px;
-    height: 500px;
-    text-align: center;
+    width: 700px; /* bigger to fit both forms */
     margin: auto;
+    text-align: center;
 }
+
+.form-container {
+    display: flex;               /* side by side layout */
+    justify-content: space-around; 
+    gap: 30px;                   /* spacing between forms */
+}
+
+.form-box {
+    flex: 1;                     /* equal width */
+    background-color: #B9C7A5;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
+.form-box h2 {
+    margin-bottom: 15px;
+}
+
+
+
 
 #orderDetails,#profile{
     background-color: hwb(100 72% 9%);
@@ -119,6 +139,7 @@ nav ul li a:hover {
 
 .contentSection {
     padding: 2%;
+    background-color: #ffffff;
     display: none;
     text-align:left;
 }
